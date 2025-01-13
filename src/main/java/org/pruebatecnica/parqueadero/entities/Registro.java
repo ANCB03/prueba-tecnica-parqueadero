@@ -8,8 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -28,7 +27,7 @@ public class Registro implements Serializable {
     @Column(length = 10)
     private String tipoRegistro;
 
-    private LocalDate fechaRegistro;
+    private LocalDateTime fechaRegistro;
 
     @ManyToOne
     @JoinColumn(name = "idVehiculo")

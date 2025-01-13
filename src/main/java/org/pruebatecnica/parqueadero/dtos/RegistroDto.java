@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -14,9 +16,11 @@ import java.time.LocalDate;
 public class RegistroDto {
     private int idRegistro;
 
+    @NotBlank(message = "se requiere tipo de registro")
+    @Pattern(regexp = "^(ENTRADA|SALIDA)$", message = "El tipo de registro debe ser 'ENTRADA' o 'SALIDA'")
     private String tipoRegistro;
 
-    private LocalDate fechaRegistro;
+    private LocalDateTime fechaRegistro;
 
     private VehiculoDto vehiculo;
 

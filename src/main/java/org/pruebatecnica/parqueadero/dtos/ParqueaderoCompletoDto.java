@@ -42,6 +42,4 @@ public class ParqueaderoCompletoDto {
     private List<HistorialSinParqueaderoDto> historial = new ArrayList<>();
 
     private List<RegistroSinParqueaderoDto> registros = new ArrayList<>();
-
-    private List<IngresoSinParqueaderoDto> ingresos = new ArrayList<>();
 }

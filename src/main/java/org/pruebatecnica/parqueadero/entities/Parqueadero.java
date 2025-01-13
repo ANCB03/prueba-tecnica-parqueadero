@@ -52,8 +52,4 @@ public class Parqueadero implements Serializable {
     @JsonIgnoreProperties("parqueadero")
     @OneToMany(mappedBy = "parqueadero", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Historial> historiales = new ArrayList<>();
-
-    @JsonIgnoreProperties("parqueadero")
-    @OneToMany(mappedBy = "parqueadero", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Ingreso> ingresos = new ArrayList<>();
 }

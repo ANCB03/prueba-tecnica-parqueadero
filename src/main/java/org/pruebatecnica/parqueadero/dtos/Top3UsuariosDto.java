@@ -5,19 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
-import java.time.LocalDateTime;
+import java.math.BigInteger;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegistroSinVehiculoDto {
-    private int idRegistro;
+public class Top3UsuariosDto {
+    private String nombre;
 
-    private String tipoRegistro;
+    private String apellido;
 
-    private LocalDateTime fechaRegistro;
-
-    private ParqueaderoDto parqueadero;
+    private BigInteger entradas;
 }

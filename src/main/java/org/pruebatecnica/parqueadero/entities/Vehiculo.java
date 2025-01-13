@@ -49,8 +49,4 @@ public class Vehiculo implements Serializable {
     @JsonIgnoreProperties("vehiculo")
     @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Historial> historiales = new ArrayList<>();
-
-    @JsonIgnoreProperties("vehiculo")
-    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Ingreso> ingresos = new ArrayList<>();
 }

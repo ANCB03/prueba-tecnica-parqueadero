@@ -3,6 +3,8 @@ package org.pruebatecnica.parqueadero.implement;
 import lombok.RequiredArgsConstructor;
 import org.pruebatecnica.parqueadero.dtos.ParqueaderoCompletoDto;
 import org.pruebatecnica.parqueadero.dtos.ParqueaderoDto;
+import org.pruebatecnica.parqueadero.dtos.Top3ParqueaderosDto;
+import org.pruebatecnica.parqueadero.dtos.Top3UsuariosDto;
 import org.pruebatecnica.parqueadero.entities.Parqueadero;
 import org.pruebatecnica.parqueadero.entities.Usuario;
 import org.pruebatecnica.parqueadero.exceptions.NotFoundException;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -71,7 +75,7 @@ public class ParqueaderoImplement implements ParqueaderoService {
             parqueadero.setSocio(socio);
         }
 
-        if (parqueaderoDto.getNombre().isEmpty())
+        if (!parqueaderoDto.getNombre().isEmpty())
             parqueadero.setNombre(parqueaderoDto.getNombre());
 
         if (parqueaderoDto.getCapacidadMax() >= 0)
@@ -87,5 +91,19 @@ public class ParqueaderoImplement implements ParqueaderoService {
 
         repository.save(parqueadero);
         return parqueaderoMapper.toDto(parqueadero);
+    }
+
+    @Override
+    public List<Top3ParqueaderosDto> top3Parqueaderos() {
+        List<Object[]> ob = repository.getTopParqueaderosGananciaSemana();
+        Top3ParqueaderosDto parqueaderoDto = new Top3ParqueaderosDto();
+        List<Top3ParqueaderosDto> list = new ArrayList<>();
+        for(Object[] ob1 : ob){
+            parqueaderoDto.setNombre((String) ob1[0]);
+            parqueaderoDto.setGanancia((BigDecimal) ob1[1]);
+            parqueaderoDto.setVehiculos((BigInteger) ob1[2]);
+            list.add(parqueaderoDto);
+        }
+        return list;
     }
 }

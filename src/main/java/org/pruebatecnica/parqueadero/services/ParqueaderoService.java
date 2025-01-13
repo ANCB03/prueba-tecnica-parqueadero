@@ -2,6 +2,7 @@ package org.pruebatecnica.parqueadero.services;
 
 import org.pruebatecnica.parqueadero.dtos.ParqueaderoCompletoDto;
 import org.pruebatecnica.parqueadero.dtos.ParqueaderoDto;
+import org.pruebatecnica.parqueadero.dtos.Top3ParqueaderosDto;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface ParqueaderoService {
     public ParqueaderoCompletoDto encontrarParqueaderoById(int id);
 
     public ParqueaderoDto editarParqueadero(int id, ParqueaderoDto parqueaderoDto);
+
+    public List<Top3ParqueaderosDto> top3Parqueaderos();
 }

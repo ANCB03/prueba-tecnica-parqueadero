@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -25,9 +25,9 @@ public class Historial implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idHistorial;
 
-    private LocalDate fechaEntrada;
+    private LocalDateTime fechaEntrada;
 
-    private LocalDate fechaSalida;
+    private LocalDateTime fechaSalida;
 
     @Column(length = 10)
     private BigDecimal monto;

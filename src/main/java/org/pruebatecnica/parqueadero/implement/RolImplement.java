@@ -38,6 +38,7 @@ public class RolImplement implements RolService {
         repository.save(rolMapper.toEntity(rolDto));
     }
 
+    @Transactional
     @Override
     public void eliminar(int id) {
         Rol rol = repository.findById(id).orElseThrow(

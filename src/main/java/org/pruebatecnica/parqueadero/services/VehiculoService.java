@@ -14,5 +14,7 @@ public interface VehiculoService {
 
     public VehiculoCompletoDto encontrarVehiculoByPlaca(String placa);
 
+    public List<VehiculoDto> encontrarVehiculosByParqueadero(int id);
+
     public VehiculoDto editarVehiculo(String placa, VehiculoDto vehiculoDto);
 }

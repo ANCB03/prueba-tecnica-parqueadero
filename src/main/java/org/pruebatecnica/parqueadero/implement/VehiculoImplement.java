@@ -3,18 +3,21 @@ package org.pruebatecnica.parqueadero.implement;
 import lombok.RequiredArgsConstructor;
 import org.pruebatecnica.parqueadero.dtos.VehiculoCompletoDto;
 import org.pruebatecnica.parqueadero.dtos.VehiculoDto;
+import org.pruebatecnica.parqueadero.entities.Registro;
 import org.pruebatecnica.parqueadero.entities.Vehiculo;
 import org.pruebatecnica.parqueadero.exceptions.WithReferencesException;
 import org.pruebatecnica.parqueadero.exceptions.NotFoundException;
 import org.pruebatecnica.parqueadero.exceptions.PlacaException;
 import org.pruebatecnica.parqueadero.mappers.VehiculoCompletoMapper;
 import org.pruebatecnica.parqueadero.mappers.VehiculoMapper;
+import org.pruebatecnica.parqueadero.repositories.RegistroRepository;
 import org.pruebatecnica.parqueadero.repositories.VehiculoRepository;
 import org.pruebatecnica.parqueadero.services.VehiculoService;
 import org.pruebatecnica.parqueadero.util.MessageUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -23,6 +26,8 @@ import java.util.Locale;
 public class VehiculoImplement implements VehiculoService {
 
     private final VehiculoRepository repository;
+
+    private final RegistroRepository registroRepository;
 
     private final VehiculoMapper vehiculoMapper;
 
@@ -40,7 +45,7 @@ public class VehiculoImplement implements VehiculoService {
         validarFormatoPlaca(vehiculoDto.getPlaca());
         repository.save(vehiculoMapper.toEntity(vehiculoDto));
     }
-
+    @Transactional
     @Override
     public void eliminar(String placa) {
         validarFormatoPlaca(placa);
@@ -62,8 +67,18 @@ public class VehiculoImplement implements VehiculoService {
     }
 
     @Override
+    public List<VehiculoDto> encontrarVehiculosByParqueadero(int id) {
+        List<Registro> registros = registroRepository.findVehiculosConEntradaParqueadero(id);
+        List<VehiculoDto> vehiculos = new ArrayList<>();
+        for(Registro registro: registros){
+            VehiculoDto vehiculoDto = vehiculoMapper.toDto(registro.getVehiculo());
+            vehiculos.add(vehiculoDto);
+        }
+        return  vehiculos;
+    }
+
+    @Override
     public VehiculoDto editarVehiculo(String placa, VehiculoDto vehiculoDto) {
-        validarFormatoPlaca(placa);
         Vehiculo vehiculo = repository.findById(placa).orElseThrow(
                 () -> new NotFoundException(messageUtil.getMessage("VehiculoNotFound", null, Locale.getDefault()))
         );

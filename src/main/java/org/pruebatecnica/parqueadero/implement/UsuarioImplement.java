@@ -1,6 +1,8 @@
 package org.pruebatecnica.parqueadero.implement;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.pruebatecnica.parqueadero.dtos.Top3UsuariosDto;
 import org.pruebatecnica.parqueadero.dtos.UsuarioCompletoDto;
 import org.pruebatecnica.parqueadero.dtos.UsuarioDto;
 import org.pruebatecnica.parqueadero.entities.*;
@@ -15,6 +17,8 @@ import org.pruebatecnica.parqueadero.util.MessageUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -54,7 +58,7 @@ public class UsuarioImplement implements UsuarioService {
         //usuario.setPassword(bCryptPasswordEncoder.encode(usuario.getPassword())); Se implementa con la seguridad
         repository.save(usuarioMapper.toEntity(usuarioDto));
     }
-
+    @Transactional
     @Override
     public void eliminar(int id) {
         Usuario usuario = repository.findById(id).orElseThrow(
@@ -72,6 +76,21 @@ public class UsuarioImplement implements UsuarioService {
                 () -> new NotFoundException(messageUtil.getMessage("UsuarioNotFound", null, Locale.getDefault()))
         ));
     }
+
+    @Override
+    public List<Top3UsuariosDto> top3Usuarios() {
+        List<Object[]> ob = repository.getTopSociosIngresosSemana();
+        Top3UsuariosDto usuarioDto = new Top3UsuariosDto();
+        List<Top3UsuariosDto> list = new ArrayList<>();
+        for(Object[] ob1 : ob){
+                usuarioDto.setNombre((String) ob1[0]);
+                usuarioDto.setApellido((String) ob1[1]);
+                usuarioDto.setEntradas((BigInteger) ob1[2]);
+                list.add(usuarioDto);
+        }
+        return list;
+    }
+
     @Transactional
     @Override
     public UsuarioDto editarUsuario(int id, UsuarioDto usuarioDto) {
@@ -86,15 +105,15 @@ public class UsuarioImplement implements UsuarioService {
             usuario.setRol(rol);
         }
 
-        if (usuarioDto.getNombre().isEmpty())
+        if (!usuarioDto.getNombre().isEmpty())
             usuario.setNombre(usuarioDto.getNombre());
 
 
-        if (usuarioDto.getApellido().isEmpty())
+        if (!usuarioDto.getApellido().isEmpty())
             usuario.setApellido(usuarioDto.getApellido());
 
 
-        if (usuarioDto.getDocumento().isEmpty())
+        if (!usuarioDto.getDocumento().isEmpty())
             usuario.setDocumento(usuarioDto.getDocumento());
 
         usuario.setEstado(usuarioDto.isEstado());

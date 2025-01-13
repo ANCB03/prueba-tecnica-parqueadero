@@ -2,27 +2,42 @@ package org.pruebatecnica.parqueadero.implement;
 
 import lombok.RequiredArgsConstructor;
 import org.pruebatecnica.parqueadero.dtos.HistorialDto;
+import org.pruebatecnica.parqueadero.dtos.RequestEntradaSalida;
 import org.pruebatecnica.parqueadero.entities.Historial;
 import org.pruebatecnica.parqueadero.entities.Parqueadero;
+import org.pruebatecnica.parqueadero.entities.Registro;
 import org.pruebatecnica.parqueadero.entities.Vehiculo;
 import org.pruebatecnica.parqueadero.exceptions.NotFoundException;
+import org.pruebatecnica.parqueadero.exceptions.PlacaException;
+import org.pruebatecnica.parqueadero.exceptions.WithReferencesException;
 import org.pruebatecnica.parqueadero.mappers.HistorialMapper;
 import org.pruebatecnica.parqueadero.repositories.HistorialRepository;
 import org.pruebatecnica.parqueadero.repositories.ParqueaderoRepository;
+import org.pruebatecnica.parqueadero.repositories.RegistroRepository;
 import org.pruebatecnica.parqueadero.repositories.VehiculoRepository;
 import org.pruebatecnica.parqueadero.services.HistorialService;
 import org.pruebatecnica.parqueadero.util.MessageUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class HistorialImplement implements HistorialService {
 
     private final HistorialRepository repository;
+
+    private final RegistroRepository registroRepository;
 
     private final VehiculoRepository vehiculoRepository;
 
@@ -43,6 +58,45 @@ public class HistorialImplement implements HistorialService {
     }
 
     @Override
+    public void guardarSalida(RequestEntradaSalida requestSalida) {
+        Optional<Registro> vehiculoConEntrada = registroRepository.findVehiculoConEntradaParqueadero(requestSalida.getPlaca(), requestSalida.getIdParqueadero());
+
+        if (!vehiculoConEntrada.isEmpty()) {
+            Vehiculo vehiculo = vehiculoRepository.findById(requestSalida.getPlaca()).orElseThrow(
+                    () -> new NotFoundException(messageUtil.getMessage("VehiculoNotFound", null, Locale.getDefault()))
+            );
+
+            Parqueadero parqueadero = parqueaderoRepository.findById(requestSalida.getIdParqueadero()).orElseThrow(
+                    () -> new NotFoundException(messageUtil.getMessage("ParqueaderoNotFound", null, Locale.getDefault()))
+            );
+
+            Historial historial = new Historial();
+            historial.setVehiculo(vehiculo);
+            historial.setParqueadero(parqueadero);
+            Registro registro = vehiculoConEntrada.get();
+            registro.setTipoRegistro("SALIDA");
+            historial.setFechaEntrada(registro.getFechaRegistro());
+            ZoneId colombiaZone = ZoneId.of("America/Bogota");
+            ZonedDateTime fechaHoraColombia = ZonedDateTime.now(colombiaZone);
+            LocalDateTime fechaHoraActual = fechaHoraColombia.toLocalDateTime();
+            historial.setFechaSalida(fechaHoraActual);
+            Duration duration = Duration.between(vehiculoConEntrada.get().getFechaRegistro(), fechaHoraActual);
+            BigDecimal horasDecimales = BigDecimal.valueOf(duration.toMinutes() / 60.0);
+            BigDecimal montoTotal = parqueadero.getCostoHora().multiply(horasDecimales).setScale(2, RoundingMode.HALF_UP);
+            historial.setMonto(montoTotal);
+            parqueadero.setCapacidadOcup(parqueadero.getCapacidadOcup()-1);
+            parqueaderoRepository.save(parqueadero);
+            registroRepository.save(registro);
+            repository.save(historial);
+        }else{
+            throw new PlacaException(messageUtil.getMessage("vehiculoWithoutEntrada", null, Locale.getDefault()));
+        }
+
+
+
+    }
+
+    @Override
     public void eliminar(int id) {
         Historial historial = repository.findById(id).orElseThrow(
                 () -> new NotFoundException(messageUtil.getMessage("HistorialNotFound", null, Locale.getDefault()))
@@ -56,6 +110,17 @@ public class HistorialImplement implements HistorialService {
                 () -> new NotFoundException(messageUtil.getMessage("HistorialNotFound", null, Locale.getDefault()))
         ));
     }
+
+    @Override
+    public List<BigDecimal> gananciasPorPeridos(int idParqueadero) {
+        List<BigDecimal> ganancias = new ArrayList<>();
+        ganancias.add(repository.gananciasHoy(idParqueadero));
+        ganancias.add(repository.gananciasSemana(idParqueadero));
+        ganancias.add(repository.gananciasMes(idParqueadero));
+        ganancias.add(repository.gananciasAnio(idParqueadero));
+        return ganancias;
+    }
+
     @Transactional
     @Override
     public HistorialDto editarHistorial(int id, HistorialDto historialDto) {

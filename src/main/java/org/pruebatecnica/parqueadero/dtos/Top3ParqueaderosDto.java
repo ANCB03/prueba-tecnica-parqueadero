@@ -4,21 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.math.BigInteger;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class IngresoDto {
-    private int idIngreso;
+public class Top3ParqueaderosDto {
+    private String nombre;
 
-    private BigDecimal monto;
+    private BigDecimal ganancia;
 
-    private LocalDate fechaPago;
-
-    private ParqueaderoDto parqueadero;
-
-    private VehiculoDto vehiculo;
+    private BigInteger vehiculos;
 }
