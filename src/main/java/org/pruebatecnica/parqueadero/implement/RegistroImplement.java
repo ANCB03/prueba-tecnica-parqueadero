@@ -13,6 +13,7 @@ import org.pruebatecnica.parqueadero.exceptions.WithReferencesException;
 import org.pruebatecnica.parqueadero.mappers.RegistroMapper;
 import org.pruebatecnica.parqueadero.repositories.ParqueaderoRepository;
 import org.pruebatecnica.parqueadero.repositories.RegistroRepository;
+import org.pruebatecnica.parqueadero.repositories.UsuarioRepository;
 import org.pruebatecnica.parqueadero.repositories.VehiculoRepository;
 import org.pruebatecnica.parqueadero.services.RegistroService;
 import org.pruebatecnica.parqueadero.util.MessageUtil;
@@ -34,6 +35,8 @@ public class RegistroImplement implements RegistroService {
 
     private final RegistroRepository repository;
 
+    private final UsuarioRepository usuarioRepository;
+
     private final VehiculoRepository vehiculoRepository;
 
     private final ParqueaderoRepository parqueaderoRepository;
@@ -53,7 +56,7 @@ public class RegistroImplement implements RegistroService {
     }
 
     @Override
-    public RegistroDto guardarEntrada(RequestEntradaSalida requestEntrada) {
+    public RegistroDto guardarEntrada(RequestEntradaSalida requestEntrada, String correo) {
         Optional<Registro> vehiculoConEntrada = repository.findVehiculoConEntrada(requestEntrada.getPlaca());
 
         if (!vehiculoConEntrada.isEmpty()) {
@@ -68,21 +71,30 @@ public class RegistroImplement implements RegistroService {
                 () -> new NotFoundException(messageUtil.getMessage("ParqueaderoNotFound", null, Locale.getDefault()))
         );
 
-        if(parqueadero.getCapacidadOcup() < parqueadero.getCapacidadMax()){
-            Registro registro = new Registro();
-            ZoneId colombiaZone = ZoneId.of("America/Bogota");
-            ZonedDateTime fechaHoraColombia = ZonedDateTime.now(colombiaZone);
-            LocalDateTime fechaHoraActual = fechaHoraColombia.toLocalDateTime();
-            registro.setFechaRegistro(fechaHoraActual);
-            registro.setTipoRegistro("ENTRADA");
-            registro.setVehiculo(vehiculo);
-            parqueadero.setCapacidadOcup(parqueadero.getCapacidadOcup()+1);
-            registro.setParqueadero(parqueadero);
-            parqueaderoRepository.save(parqueadero);
-            return registroMapper.toDto(repository.save(registro));
-        }else {
-            throw new PlacaException(messageUtil.getMessage("parqueaderoMax", null, Locale.getDefault()));
+        Usuario socio = usuarioRepository.findByEmail(correo).orElseThrow(
+                () -> new NotFoundException(messageUtil.getMessage("UsuarioNotFound", null, Locale.getDefault()))
+        );
+
+        if(parqueadero.getSocio().getIdUsuario() == socio.getIdUsuario()){
+            if(parqueadero.getCapacidadOcup() < parqueadero.getCapacidadMax()){
+                Registro registro = new Registro();
+                ZoneId colombiaZone = ZoneId.of("America/Bogota");
+                ZonedDateTime fechaHoraColombia = ZonedDateTime.now(colombiaZone);
+                LocalDateTime fechaHoraActual = fechaHoraColombia.toLocalDateTime();
+                registro.setFechaRegistro(fechaHoraActual);
+                registro.setTipoRegistro("ENTRADA");
+                registro.setVehiculo(vehiculo);
+                parqueadero.setCapacidadOcup(parqueadero.getCapacidadOcup()+1);
+                registro.setParqueadero(parqueadero);
+                parqueaderoRepository.save(parqueadero);
+                return registroMapper.toDto(repository.save(registro));
+            }else {
+                throw new PlacaException(messageUtil.getMessage("parqueaderoMax", null, Locale.getDefault()));
+            }
+        }else{
+            throw new PlacaException(messageUtil.getMessage("socioWithoutParqueadero", null, Locale.getDefault()));
         }
+
     }
 
     @Override

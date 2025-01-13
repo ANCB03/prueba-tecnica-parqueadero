@@ -11,7 +11,7 @@ public interface HistorialService {
 
     public void guardar(HistorialDto historialDto);
 
-    public void guardarSalida(RequestEntradaSalida requestSalida);
+    public void guardarSalida(RequestEntradaSalida requestSalida, String correo);
 
     public void eliminar(int id);
 

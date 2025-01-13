@@ -1,5 +1,7 @@
-package org.pruebatecnica.parqueadero.security;
+package org.pruebatecnica.parqueadero.config;
 
+import org.pruebatecnica.parqueadero.security.JwtAuthenticationFilter;
+import org.pruebatecnica.parqueadero.security.JwtAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,14 +23,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private UserDetailsService userDetailsService;
 
+	private final BCryptPasswordEncoder encoder;
 
-	public WebSecurityConfig(UserDetailsService userDetailsService) {
+	public WebSecurityConfig(UserDetailsService userDetailsService, BCryptPasswordEncoder encoder) {
 		this.userDetailsService = userDetailsService;
-	}
+        this.encoder = encoder;
+    }
 
-	@Bean
 	public BCryptPasswordEncoder encoder() {
-		return new BCryptPasswordEncoder();
+		return encoder;
 	}
 
 	@Override

@@ -20,4 +20,6 @@ public interface ParqueaderoService {
     public List<Top3ParqueaderosDto> top3Parqueaderos();
 
     public List<ParqueaderoDto> parqueaderosSocio(int idUsuario);
+
+    public List<ParqueaderoDto> parqueaderosSocioToken(String correo);
 }

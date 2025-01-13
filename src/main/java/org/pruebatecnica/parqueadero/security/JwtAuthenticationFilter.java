@@ -2,7 +2,6 @@ package org.pruebatecnica.parqueadero.security;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.pruebatecnica.parqueadero.dtos.AuthorizationRequest;
 import org.pruebatecnica.parqueadero.dtos.UserLoginDto;
 import org.pruebatecnica.parqueadero.util.TokenProvider;
@@ -22,7 +21,6 @@ import static org.pruebatecnica.parqueadero.util.Constants.HEADER_AUTHORIZATION_
 import static org.pruebatecnica.parqueadero.util.Constants.TOKEN_BEARER_PREFIX;
 
 
-@Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 	private AuthenticationManager authenticationManager;

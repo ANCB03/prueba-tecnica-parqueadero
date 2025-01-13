@@ -22,6 +22,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -111,5 +112,14 @@ public class ParqueaderoImplement implements ParqueaderoService {
     public List<ParqueaderoDto> parqueaderosSocio(int idUsuario) {
         List<ParqueaderoDto> parqueaderos = parqueaderoMapper.toParqueaderolist(repository.findParqueaderosSocio(idUsuario));
         return parqueaderos;
+    }
+
+    @Override
+    public List<ParqueaderoDto> parqueaderosSocioToken(String correo) {
+        Usuario usuario = usuarioRepository.findByEmail(correo).orElseThrow(
+                () -> new NotFoundException(messageUtil.getMessage("UsuarioNotFound",null, Locale.getDefault()))
+        );
+        return parqueaderoMapper.toParqueaderolist(repository.findParqueaderosSocio(usuario.getIdUsuario()));
+
     }
 }

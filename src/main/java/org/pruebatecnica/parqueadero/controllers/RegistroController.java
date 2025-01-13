@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.pruebatecnica.parqueadero.dtos.RegistroDto;
 import org.pruebatecnica.parqueadero.dtos.RequestEntradaSalida;
 import org.pruebatecnica.parqueadero.services.RegistroService;
+import org.pruebatecnica.parqueadero.util.TokenProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,12 +22,12 @@ public class RegistroController {
     private final RegistroService service;
 
     private Map<String,Object> response = new HashMap<>();
-
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_SOCIO')")
     @GetMapping("/all")
     public ResponseEntity<?> RegistroList(){
         return new ResponseEntity<>(service.listarRegistros(), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_SOCIO')")
     @GetMapping("/top-10")
     public ResponseEntity<?> Top10Vehiculos(){
         return new ResponseEntity<>(service.encontrarTop10Vehiculos(), HttpStatus.OK);
@@ -53,11 +55,12 @@ public class RegistroController {
         response.put("message","Registro guardado");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasRole('ROLE_SOCIO')")
     @PostMapping("/save-entrada")
-    public ResponseEntity<?> saveEntrada(@Valid @RequestBody RequestEntradaSalida requestEntrada) {
+    public ResponseEntity<?> saveEntrada(@Valid @RequestBody RequestEntradaSalida requestEntrada, @RequestHeader("Authorization") String bearerToken) {
         response.clear();
-        RegistroDto registroDto = service.guardarEntrada(requestEntrada);
+        String token = bearerToken.substring(7);
+        RegistroDto registroDto = service.guardarEntrada(requestEntrada, TokenProvider.getUserName(token));
         response.put("id",registroDto.getIdRegistro());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

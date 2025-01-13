@@ -10,7 +10,7 @@ public interface RegistroService {
 
     public RegistroDto guardar(RegistroDto registroDto);
 
-    public RegistroDto guardarEntrada(RequestEntradaSalida requestEntrada);
+    public RegistroDto guardarEntrada(RequestEntradaSalida requestEntrada, String correo);
 
     public void eliminar(int id);
 

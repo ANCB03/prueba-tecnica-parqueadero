@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.pruebatecnica.parqueadero.dtos.HistorialDto;
 import org.pruebatecnica.parqueadero.dtos.RequestEntradaSalida;
 import org.pruebatecnica.parqueadero.services.HistorialService;
+import org.pruebatecnica.parqueadero.util.TokenProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,17 +25,17 @@ public class HistorialController {
     private  final HistorialService service;
 
     private Map<String,Object> response = new HashMap<>();
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<?> HistorialList(){
         return new ResponseEntity<>(service.listarHistoriales(), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping({"/{id}"})
     public ResponseEntity<?> findHistorial(@PathVariable int id) {
         return new ResponseEntity<>(service.encontrarHistorialById(id), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasRole('ROLE_SOCIO')")
     @GetMapping({"/ganancias/periodos/{id}"})
     public ResponseEntity<?> gananciasPeriodos(@PathVariable int id) {
         response.clear();
@@ -44,7 +46,7 @@ public class HistorialController {
         response.put("anio",ganancias.get(3));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/save")
     public ResponseEntity<?> saveHistorial(@Valid @RequestBody HistorialDto historialDto) {
         response.clear();
@@ -52,16 +54,16 @@ public class HistorialController {
         response.put("message","Historial guardado");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasRole('ROLE_SOCIO')")
     @PostMapping("/save-salida")
-    public ResponseEntity<?> saveSalida(@Valid @RequestBody RequestEntradaSalida requestSalida) {
+    public ResponseEntity<?> saveSalida(@Valid @RequestBody RequestEntradaSalida requestSalida, @RequestHeader("Authorization") String bearerToken) {
         response.clear();
-        //Implementar nuevo método en el service
-        service.guardarSalida(requestSalida);
+        String token = bearerToken.substring(7);
+        service.guardarSalida(requestSalida, TokenProvider.getUserName(token));
         response.put("mensaje","Salida registrada");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteHistorial(@PathVariable int id) {
 
@@ -70,7 +72,7 @@ public class HistorialController {
         response.put("message","Historial eliminado");
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/edit/{id}")
     public ResponseEntity<?> editHistorial(@PathVariable int id,@Valid @RequestBody HistorialDto historialDto) {
         response.clear();

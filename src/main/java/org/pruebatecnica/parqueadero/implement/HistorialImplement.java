@@ -3,18 +3,12 @@ package org.pruebatecnica.parqueadero.implement;
 import lombok.RequiredArgsConstructor;
 import org.pruebatecnica.parqueadero.dtos.HistorialDto;
 import org.pruebatecnica.parqueadero.dtos.RequestEntradaSalida;
-import org.pruebatecnica.parqueadero.entities.Historial;
-import org.pruebatecnica.parqueadero.entities.Parqueadero;
-import org.pruebatecnica.parqueadero.entities.Registro;
-import org.pruebatecnica.parqueadero.entities.Vehiculo;
+import org.pruebatecnica.parqueadero.entities.*;
 import org.pruebatecnica.parqueadero.exceptions.NotFoundException;
 import org.pruebatecnica.parqueadero.exceptions.PlacaException;
 import org.pruebatecnica.parqueadero.exceptions.WithReferencesException;
 import org.pruebatecnica.parqueadero.mappers.HistorialMapper;
-import org.pruebatecnica.parqueadero.repositories.HistorialRepository;
-import org.pruebatecnica.parqueadero.repositories.ParqueaderoRepository;
-import org.pruebatecnica.parqueadero.repositories.RegistroRepository;
-import org.pruebatecnica.parqueadero.repositories.VehiculoRepository;
+import org.pruebatecnica.parqueadero.repositories.*;
 import org.pruebatecnica.parqueadero.services.HistorialService;
 import org.pruebatecnica.parqueadero.util.MessageUtil;
 import org.springframework.stereotype.Service;
@@ -39,6 +33,8 @@ public class HistorialImplement implements HistorialService {
 
     private final RegistroRepository registroRepository;
 
+    private final UsuarioRepository usuarioRepository;
+
     private final VehiculoRepository vehiculoRepository;
 
     private final ParqueaderoRepository parqueaderoRepository;
@@ -58,7 +54,7 @@ public class HistorialImplement implements HistorialService {
     }
 
     @Override
-    public void guardarSalida(RequestEntradaSalida requestSalida) {
+    public void guardarSalida(RequestEntradaSalida requestSalida, String correo) {
         Optional<Registro> vehiculoConEntrada = registroRepository.findVehiculoConEntradaParqueadero(requestSalida.getPlaca(), requestSalida.getIdParqueadero());
 
         if (!vehiculoConEntrada.isEmpty()) {
@@ -69,6 +65,14 @@ public class HistorialImplement implements HistorialService {
             Parqueadero parqueadero = parqueaderoRepository.findById(requestSalida.getIdParqueadero()).orElseThrow(
                     () -> new NotFoundException(messageUtil.getMessage("ParqueaderoNotFound", null, Locale.getDefault()))
             );
+
+            Usuario socio = usuarioRepository.findByEmail(correo).orElseThrow(
+                    () -> new NotFoundException(messageUtil.getMessage("UsuarioNotFound", null, Locale.getDefault()))
+            );
+
+            if(parqueadero.getSocio().getIdUsuario() != socio.getIdUsuario()){
+                throw new PlacaException(messageUtil.getMessage("socioWithoutParqueadero", null, Locale.getDefault()));
+            }
 
             Historial historial = new Historial();
             historial.setVehiculo(vehiculo);

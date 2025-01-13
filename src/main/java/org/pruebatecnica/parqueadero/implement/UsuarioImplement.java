@@ -1,7 +1,6 @@
 package org.pruebatecnica.parqueadero.implement;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.pruebatecnica.parqueadero.dtos.Top3UsuariosDto;
 import org.pruebatecnica.parqueadero.dtos.UsuarioCompletoDto;
 import org.pruebatecnica.parqueadero.dtos.UsuarioDto;
@@ -18,6 +17,8 @@ import org.pruebatecnica.parqueadero.util.MessageUtil;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +42,7 @@ public class UsuarioImplement implements UsuarioService, UserDetailsService {
 
     private final MessageUtil messageUtil;
 
-    //private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public List<UsuarioDto> listarUsuarios() {
@@ -59,8 +60,8 @@ public class UsuarioImplement implements UsuarioService, UserDetailsService {
             throw new WithReferencesException(messageUtil.getMessage("UsuarioWithEmail", null, Locale.getDefault()));
         }
         Usuario usuario = usuarioMapper.toEntity(usuarioDto);
-        //usuario.setPassword(bCryptPasswordEncoder.encode(usuario.getPassword())); Se implementa con la seguridad
-        repository.save(usuarioMapper.toEntity(usuarioDto));
+        usuario.setPassword(bCryptPasswordEncoder.encode(usuario.getPassword()));
+        repository.save(usuario);
     }
     @Transactional
     @Override
