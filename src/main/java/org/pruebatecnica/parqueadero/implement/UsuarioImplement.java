@@ -8,12 +8,16 @@ import org.pruebatecnica.parqueadero.dtos.UsuarioDto;
 import org.pruebatecnica.parqueadero.entities.*;
 import org.pruebatecnica.parqueadero.exceptions.NotFoundException;
 import org.pruebatecnica.parqueadero.exceptions.WithReferencesException;
+import org.pruebatecnica.parqueadero.mappers.UserDetailsMapper;
 import org.pruebatecnica.parqueadero.mappers.UsuarioCompletoMapper;
 import org.pruebatecnica.parqueadero.mappers.UsuarioMapper;
 import org.pruebatecnica.parqueadero.repositories.RolRepository;
 import org.pruebatecnica.parqueadero.repositories.UsuarioRepository;
 import org.pruebatecnica.parqueadero.services.UsuarioService;
 import org.pruebatecnica.parqueadero.util.MessageUtil;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +29,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UsuarioImplement implements UsuarioService {
+public class UsuarioImplement implements UsuarioService, UserDetailsService {
 
     private final UsuarioRepository repository;
 
@@ -123,5 +127,14 @@ public class UsuarioImplement implements UsuarioService {
 
         repository.save(usuario);
         return usuarioMapper.toDto(usuario);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        final Usuario retrievedUser = repository.findByEmail(username).get();
+        if (retrievedUser == null) {
+            throw new UsernameNotFoundException("Invalid username or password");
+        }
+        return UserDetailsMapper.build(retrievedUser);
     }
 }
