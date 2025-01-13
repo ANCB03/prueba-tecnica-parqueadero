@@ -1,6 +1,7 @@
 package org.pruebatecnica.parqueadero.repositories;
 
 import org.pruebatecnica.parqueadero.entities.Parqueadero;
+import org.pruebatecnica.parqueadero.entities.Registro;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -26,4 +27,10 @@ public interface ParqueaderoRepository extends JpaRepository<Parqueadero, Intege
             nativeQuery = true
     )
     List<Object[]> getTopParqueaderosGananciaSemana();
+
+    @Query(
+            value = "SELECT * FROM parqueadero u where u.id_usuario= :idUsuario",
+            nativeQuery = true
+    )
+    List<Parqueadero> findParqueaderosSocio(int idUsuario);
 }

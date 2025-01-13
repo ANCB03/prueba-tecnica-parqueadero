@@ -40,6 +40,11 @@ public class ParqueaderoController {
         return new ResponseEntity<>(service.encontrarParqueaderoById(id), HttpStatus.OK);
     }
 
+    @GetMapping({"/socio/{id}"})
+    public ResponseEntity<?> findParqueaderoSocio(@PathVariable int id) {
+        return new ResponseEntity<>(service.parqueaderosSocio(id), HttpStatus.OK);
+    }
+
     @PostMapping("/save")
     public ResponseEntity<?> saveParqueadero(@Valid @RequestBody ParqueaderoDto parqueaderoDto) {
         response.clear();

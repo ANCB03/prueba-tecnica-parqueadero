@@ -1,6 +1,5 @@
 package org.pruebatecnica.parqueadero.implement;
 
-import lombok.RequiredArgsConstructor;
 import org.pruebatecnica.parqueadero.dtos.CorreoAPIDto;
 import org.pruebatecnica.parqueadero.dtos.CorreoDto;
 import org.pruebatecnica.parqueadero.entities.Registro;

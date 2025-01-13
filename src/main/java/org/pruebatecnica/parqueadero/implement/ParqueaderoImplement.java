@@ -106,4 +106,10 @@ public class ParqueaderoImplement implements ParqueaderoService {
         }
         return list;
     }
+
+    @Override
+    public List<ParqueaderoDto> parqueaderosSocio(int idUsuario) {
+        List<ParqueaderoDto> parqueaderos = parqueaderoMapper.toParqueaderolist(repository.findParqueaderosSocio(idUsuario));
+        return parqueaderos;
+    }
 }
