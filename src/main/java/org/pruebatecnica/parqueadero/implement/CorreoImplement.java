@@ -22,7 +22,7 @@ public class CorreoImplement implements CorreoService {
     private final MessageUtil messageUtil;
 
     public CorreoImplement(WebClient.Builder webClientBuilder, RegistroRepository registroRepository, MessageUtil messageUtil) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8081").build();
+        this.webClient = webClientBuilder.baseUrl("https://email-latest.onrender.com").build();
         this.registroRepository = registroRepository;
         this.messageUtil = messageUtil;
     }

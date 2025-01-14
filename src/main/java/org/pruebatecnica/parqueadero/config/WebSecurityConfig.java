@@ -57,7 +57,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 				.cors().and()
 				.csrf().disable()
-				.authorizeRequests().antMatchers("/login", "/usuario/restablecer-password/**", "/usuario/verificar-token", "/error").permitAll()
+				.authorizeRequests().antMatchers("/login", "/swagger-ui/**","/swagger-resources/**",
+						"/swagger-ui.html",
+						"/v2/api-docs",
+						"/webjars/**","/usuario/restablecer-password/**", "/usuario/verificar-token", "/error").permitAll()
 				.anyRequest().authenticated().and()
 				.addFilterBefore(new JwtAuthenticationFilter(authenticationManager()),
 						UsernamePasswordAuthenticationFilter.class)

@@ -1,7 +1,6 @@
 package org.pruebatecnica.parqueadero.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.pruebatecnica.parqueadero.dtos.RolDto;
 import org.pruebatecnica.parqueadero.dtos.UsuarioDto;
 import org.pruebatecnica.parqueadero.services.UsuarioService;
 import org.springframework.http.HttpStatus;
