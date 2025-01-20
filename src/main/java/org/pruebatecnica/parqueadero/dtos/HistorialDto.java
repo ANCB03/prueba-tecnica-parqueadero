@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -21,7 +23,9 @@ public class HistorialDto {
 
     private BigDecimal monto;
 
-    private VehiculoDto vehiculo;
+    @NotBlank(message = "se requiere la placa del vehiculo")
+    private String id_vehiculo;
 
-    private ParqueaderoDto parqueadero;
+    @Min(value = 1, message = "El campo id_parqueadero debe ser mayor que 0")
+    private int id_parqueadero;
 }

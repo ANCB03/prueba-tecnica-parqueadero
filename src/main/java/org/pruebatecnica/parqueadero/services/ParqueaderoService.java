@@ -15,7 +15,7 @@ public interface ParqueaderoService {
 
     public ParqueaderoCompletoDto encontrarParqueaderoById(int id);
 
-    public ParqueaderoDto editarParqueadero(int id, ParqueaderoDto parqueaderoDto);
+    public ParqueaderoDto editarParqueadero(ParqueaderoDto parqueaderoDto);
 
     public List<Top3ParqueaderosDto> top3Parqueaderos();
 

@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.pruebatecnica.parqueadero.dtos.ParqueaderoCompletoDto;
 import org.pruebatecnica.parqueadero.dtos.ParqueaderoDto;
 import org.pruebatecnica.parqueadero.dtos.Top3ParqueaderosDto;
-import org.pruebatecnica.parqueadero.dtos.Top3UsuariosDto;
 import org.pruebatecnica.parqueadero.entities.Parqueadero;
 import org.pruebatecnica.parqueadero.entities.Usuario;
 import org.pruebatecnica.parqueadero.exceptions.NotFoundException;
+import org.pruebatecnica.parqueadero.exceptions.PlacaException;
 import org.pruebatecnica.parqueadero.mappers.ParqueaderoCompletoMapper;
 import org.pruebatecnica.parqueadero.mappers.ParqueaderoMapper;
 import org.pruebatecnica.parqueadero.repositories.ParqueaderoRepository;
@@ -22,7 +22,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +45,14 @@ public class ParqueaderoImplement implements ParqueaderoService {
 
     @Override
     public void guardar(ParqueaderoDto parqueaderoDto) {
-        repository.save(parqueaderoMapper.toEntity(parqueaderoDto));
+        if(parqueaderoDto.getCapacidadMax() > parqueaderoDto.getCapacidadOcup()){
+            usuarioRepository.findById(parqueaderoDto.getId_socio()).orElseThrow(
+                    () -> new NotFoundException(messageUtil.getMessage("UsuarioNotFound",null, Locale.getDefault()))
+            );
+            repository.save(parqueaderoMapper.toEntity(parqueaderoDto));
+        }else{
+            throw new PlacaException(messageUtil.getMessage("CapacidadMax",null, Locale.getDefault()));
+        }
     }
 
     @Override
@@ -64,26 +71,32 @@ public class ParqueaderoImplement implements ParqueaderoService {
     }
     @Transactional
     @Override
-    public ParqueaderoDto editarParqueadero(int id, ParqueaderoDto parqueaderoDto) {
-        Parqueadero parqueadero = repository.findById(id).orElseThrow(
+    public ParqueaderoDto editarParqueadero(ParqueaderoDto parqueaderoDto) {
+        Parqueadero parqueadero = repository.findById(parqueaderoDto.getIdParqueadero()).orElseThrow(
                 () -> new NotFoundException(messageUtil.getMessage("ParqueaderoNotFound",null, Locale.getDefault()))
         );
 
-        if (parqueaderoDto.getSocio() != null){
-            Usuario socio = usuarioRepository.findById(parqueaderoDto.getSocio().getIdUsuario()).orElseThrow(
+        if (parqueaderoDto.getId_socio() != 0){
+            Usuario socio = usuarioRepository.findById(parqueaderoDto.getId_socio()).orElseThrow(
                     () -> new NotFoundException(messageUtil.getMessage("UsuarioNotFound", null, Locale.getDefault()))
             );
-            parqueadero.setSocio(socio);
+            if(Objects.equals(socio.getRol().getNombre(), "SOCIO"))parqueadero.setSocio(socio);
         }
 
         if (!parqueaderoDto.getNombre().isEmpty())
             parqueadero.setNombre(parqueaderoDto.getNombre());
 
-        if (parqueaderoDto.getCapacidadMax() >= 0)
-            parqueadero.setCapacidadMax(parqueaderoDto.getCapacidadMax());
+        if (parqueaderoDto.getCapacidadMax() >= 0){
+            if(parqueaderoDto.getCapacidadMax() > parqueadero.getCapacidadOcup() && parqueaderoDto.getCapacidadMax() > parqueaderoDto.getCapacidadOcup()){
+                parqueadero.setCapacidadMax(parqueaderoDto.getCapacidadMax());
+            }
+        }
 
-        if(parqueaderoDto.getCapacidadOcup() >= 0)
-            parqueadero.setCapacidadOcup(parqueaderoDto.getCapacidadOcup());
+        if(parqueaderoDto.getCapacidadOcup() >= 0){
+            if(parqueaderoDto.getCapacidadOcup() <= parqueadero.getCapacidadMax() && parqueaderoDto.getCapacidadOcup() > parqueaderoDto.getCapacidadMax()){
+                parqueadero.setCapacidadOcup(parqueaderoDto.getCapacidadOcup());
+            }
+        }
 
         if (parqueaderoDto.getCostoHora().compareTo(BigDecimal.ZERO) != 0)
             parqueadero.setCostoHora(parqueaderoDto.getCostoHora());

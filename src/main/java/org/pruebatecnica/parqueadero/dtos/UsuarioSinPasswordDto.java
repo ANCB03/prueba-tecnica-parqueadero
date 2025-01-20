@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -35,5 +36,6 @@ public class UsuarioSinPasswordDto {
     @Email(message = "El correo electrónico no tiene un formato válido")
     private String email;
 
-    private RolDto rol;
+    @Min(value = 1, message = "El campo id_rol debe ser mayor que 0")
+    private int id_rol;
 }

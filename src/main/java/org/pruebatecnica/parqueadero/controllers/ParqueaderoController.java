@@ -27,7 +27,7 @@ public class ParqueaderoController {
 
     private Map<String,Object> response = new HashMap<>();
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/all")
+    @GetMapping("/")
     public ResponseEntity<?> ParqueaderoList(){
         return new ResponseEntity<>(service.listarParqueaderos(), HttpStatus.OK);
     }
@@ -54,7 +54,7 @@ public class ParqueaderoController {
         return new ResponseEntity<>(service.parqueaderosSocio(id), HttpStatus.OK);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/save")
+    @PostMapping("/")
     public ResponseEntity<?> saveParqueadero(@Valid @RequestBody ParqueaderoDto parqueaderoDto) {
         response.clear();
         service.guardar(parqueaderoDto);
@@ -62,7 +62,7 @@ public class ParqueaderoController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteParqueadero(@PathVariable int id) {
 
         response.clear();
@@ -71,13 +71,13 @@ public class ParqueaderoController {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/edit/{id}")
-    public ResponseEntity<?> editParqueadero(@PathVariable int id,@Valid @RequestBody ParqueaderoDto parqueaderoDto) {
+    @PutMapping("/")
+    public ResponseEntity<?> editParqueadero(@Valid @RequestBody ParqueaderoDto parqueaderoDto) {
         response.clear();
-        ParqueaderoDto parqueaderoDto1 = service.editarParqueadero(id,parqueaderoDto);
+        ParqueaderoDto parqueaderoDto1 = service.editarParqueadero(parqueaderoDto);
         response.put("message", "Parqueadero editado");
         response.put("parqueadero", parqueaderoDto1);
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/notificar")

@@ -127,20 +127,20 @@ public class HistorialImplement implements HistorialService {
 
     @Transactional
     @Override
-    public HistorialDto editarHistorial(int id, HistorialDto historialDto) {
-        Historial historial = repository.findById(id).orElseThrow(
+    public HistorialDto editarHistorial(HistorialDto historialDto) {
+        Historial historial = repository.findById(historialDto.getIdHistorial()).orElseThrow(
                 () -> new NotFoundException(messageUtil.getMessage("HistorialNotFound",null, Locale.getDefault()))
         );
 
-        if (historialDto.getVehiculo() != null){
-            Vehiculo vehiculo = vehiculoRepository.findById(historial.getVehiculo().getPlaca()).orElseThrow(
+        if (historialDto.getId_vehiculo() != null){
+            Vehiculo vehiculo = vehiculoRepository.findById(historialDto.getId_vehiculo()).orElseThrow(
                     () -> new NotFoundException(messageUtil.getMessage("VehiculoNotFound", null, Locale.getDefault()))
             );
             historial.setVehiculo(vehiculo);
         }
 
-        if (historialDto.getParqueadero() != null){
-            Parqueadero parqueadero = parqueaderoRepository.findById(historial.getParqueadero().getIdParqueadero()).orElseThrow(
+        if (historialDto.getId_parqueadero() != 0){
+            Parqueadero parqueadero = parqueaderoRepository.findById(historialDto.getId_parqueadero()).orElseThrow(
                     () -> new NotFoundException(messageUtil.getMessage("ParqueaderoNotFound", null, Locale.getDefault()))
             );
             historial.setParqueadero(parqueadero);

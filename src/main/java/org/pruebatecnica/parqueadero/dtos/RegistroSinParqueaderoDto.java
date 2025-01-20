@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter
@@ -19,5 +20,6 @@ public class RegistroSinParqueaderoDto {
 
     private LocalDateTime fechaRegistro;
 
-    private VehiculoDto vehiculo;
+    @NotBlank(message = "se requiere la placa del vehiculo")
+    private String id_vehiculo;
 }

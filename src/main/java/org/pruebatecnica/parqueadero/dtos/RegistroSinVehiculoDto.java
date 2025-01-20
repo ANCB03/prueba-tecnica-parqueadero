@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
 
 @Getter
@@ -19,5 +20,6 @@ public class RegistroSinVehiculoDto {
 
     private LocalDateTime fechaRegistro;
 
-    private ParqueaderoDto parqueadero;
+    @Min(value = 1, message = "El campo id_parqueadero debe ser mayor que 0")
+    private int id_parqueadero;
 }

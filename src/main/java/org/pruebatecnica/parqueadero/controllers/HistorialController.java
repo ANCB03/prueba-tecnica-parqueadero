@@ -25,7 +25,7 @@ public class HistorialController {
 
     private Map<String,Object> response = new HashMap<>();
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/all")
+    @GetMapping("/")
     public ResponseEntity<?> HistorialList(){
         return new ResponseEntity<>(service.listarHistoriales(), HttpStatus.OK);
     }
@@ -46,7 +46,7 @@ public class HistorialController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/save")
+    @PostMapping("/")
     public ResponseEntity<?> saveHistorial(@Valid @RequestBody HistorialDto historialDto) {
         response.clear();
         service.guardar(historialDto);
@@ -63,7 +63,7 @@ public class HistorialController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteHistorial(@PathVariable int id) {
 
         response.clear();
@@ -72,12 +72,12 @@ public class HistorialController {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/edit/{id}")
-    public ResponseEntity<?> editHistorial(@PathVariable int id,@Valid @RequestBody HistorialDto historialDto) {
+    @PutMapping("/")
+    public ResponseEntity<?> editHistorial(@Valid @RequestBody HistorialDto historialDto) {
         response.clear();
-        HistorialDto historialDto1 = service.editarHistorial(id,historialDto);
+        HistorialDto historialDto1 = service.editarHistorial(historialDto);
         response.put("message", "Historial editado");
         response.put("historial", historialDto1);
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
 }

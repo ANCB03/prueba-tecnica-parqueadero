@@ -22,5 +22,5 @@ public interface RegistroService {
 
     public List<Object[]> encontrarVehiculosPrimeraVezP(int idParqueadero);
 
-    public RegistroDto editarRegistro(int id, RegistroDto registroDto);
+    public RegistroDto editarRegistro(RegistroDto registroDto);
 }

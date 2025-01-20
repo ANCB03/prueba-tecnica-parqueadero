@@ -37,7 +37,8 @@ public class ParqueaderoCompletoDto {
 
     private boolean estado;
 
-    private UsuarioSinPasswordDto socio;
+    @Min(value = 1, message = "El campo id_rol debe ser mayor que 0")
+    private int id_socio;
 
     private List<HistorialSinParqueaderoDto> historial = new ArrayList<>();
 

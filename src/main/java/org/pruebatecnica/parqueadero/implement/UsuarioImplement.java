@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.pruebatecnica.parqueadero.dtos.Top3UsuariosDto;
 import org.pruebatecnica.parqueadero.dtos.UsuarioCompletoDto;
 import org.pruebatecnica.parqueadero.dtos.UsuarioDto;
+import org.pruebatecnica.parqueadero.dtos.UsuarioSinPasswordDto;
 import org.pruebatecnica.parqueadero.entities.*;
 import org.pruebatecnica.parqueadero.exceptions.NotFoundException;
 import org.pruebatecnica.parqueadero.exceptions.WithReferencesException;
@@ -45,13 +46,16 @@ public class UsuarioImplement implements UsuarioService, UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public List<UsuarioDto> listarUsuarios() {
+    public List<UsuarioSinPasswordDto> listarUsuarios() {
         return usuarioMapper.toUsuariolist(repository.findAll());
     }
 
     @Override
     public void guardar(UsuarioDto usuarioDto) {
         Optional<Usuario> usuarioExistente = repository.findByDocumento(usuarioDto.getDocumento());
+        rolRepository.findById(usuarioDto.getId_rol()).orElseThrow(
+                () -> new NotFoundException(messageUtil.getMessage("RolNotFound",null, Locale.getDefault()))
+        );
         if (!usuarioExistente.isEmpty()) {
             throw new WithReferencesException(messageUtil.getMessage("UsuarioWithDocument", null, Locale.getDefault()));
         }
@@ -98,13 +102,13 @@ public class UsuarioImplement implements UsuarioService, UserDetailsService {
 
     @Transactional
     @Override
-    public UsuarioDto editarUsuario(int id, UsuarioDto usuarioDto) {
-        Usuario usuario = repository.findById(id).orElseThrow(
+    public UsuarioDto editarUsuario(UsuarioDto usuarioDto) {
+        Usuario usuario = repository.findById(usuarioDto.getIdUsuario()).orElseThrow(
                 () -> new NotFoundException(messageUtil.getMessage("UsuarioNotFound",null, Locale.getDefault()))
         );
 
-        if (usuarioDto.getRol() != null){
-            Rol rol = rolRepository.findById(usuarioDto.getRol().getIdRol()).orElseThrow(
+        if (usuarioDto.getId_rol() != 0){
+            Rol rol = rolRepository.findById(usuarioDto.getId_rol()).orElseThrow(
                     () -> new NotFoundException(messageUtil.getMessage("RolNotFound", null, Locale.getDefault()))
             );
             usuario.setRol(rol);

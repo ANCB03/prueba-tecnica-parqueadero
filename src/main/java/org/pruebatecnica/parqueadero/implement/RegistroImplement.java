@@ -128,20 +128,20 @@ public class RegistroImplement implements RegistroService {
     }
 
     @Override
-    public RegistroDto editarRegistro(int id, RegistroDto registroDto) {
-        Registro registro = repository.findById(id).orElseThrow(
+    public RegistroDto editarRegistro(RegistroDto registroDto) {
+        Registro registro = repository.findById(registroDto.getIdRegistro()).orElseThrow(
                 () -> new NotFoundException(messageUtil.getMessage("RegistroNotFound",null, Locale.getDefault()))
         );
 
-        if (registroDto.getVehiculo() != null){
-            Vehiculo vehiculo = vehiculoRepository.findById(registroDto.getVehiculo().getPlaca()).orElseThrow(
+        if (registroDto.getId_vehiculo() != null){
+            Vehiculo vehiculo = vehiculoRepository.findById(registroDto.getId_vehiculo()).orElseThrow(
                     () -> new NotFoundException(messageUtil.getMessage("VehiculoNotFound", null, Locale.getDefault()))
             );
             registro.setVehiculo(vehiculo);
         }
 
-        if (registroDto.getParqueadero() != null){
-            Parqueadero parqueadero = parqueaderoRepository.findById(registroDto.getParqueadero().getIdParqueadero()).orElseThrow(
+        if (registroDto.getId_parqueadero() != 0){
+            Parqueadero parqueadero = parqueaderoRepository.findById(registroDto.getId_parqueadero()).orElseThrow(
                     () -> new NotFoundException(messageUtil.getMessage("ParqueaderoNotFound", null, Locale.getDefault()))
             );
             registro.setParqueadero(parqueadero);

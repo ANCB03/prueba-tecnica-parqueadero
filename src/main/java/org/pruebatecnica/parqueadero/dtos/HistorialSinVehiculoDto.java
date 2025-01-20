@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -21,5 +22,6 @@ public class HistorialSinVehiculoDto {
 
     private BigDecimal monto;
 
-    private ParqueaderoDto parqueadero;
+    @Min(value = 1, message = "El campo id_parqueadero debe ser mayor que 0")
+    private int id_parqueadero;
 }

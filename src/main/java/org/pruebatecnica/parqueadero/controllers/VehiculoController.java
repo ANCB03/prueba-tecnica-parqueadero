@@ -21,7 +21,7 @@ public class VehiculoController {
 
     private Map<String,Object> response = new HashMap<>();
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/all")
+    @GetMapping("/")
     public ResponseEntity<?> VehiculoList(){
         return new ResponseEntity<>(service.listarVehiculos(), HttpStatus.OK);
     }
@@ -36,7 +36,7 @@ public class VehiculoController {
         return new ResponseEntity<>(service.encontrarVehiculosByParqueadero(id), HttpStatus.OK);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_SOCIO')")
-    @PostMapping("/save")
+    @PostMapping("/")
     public ResponseEntity<?> saveVehiculo(@Valid @RequestBody VehiculoDto vehiculoDto) {
         response.clear();
         service.guardar(vehiculoDto);
@@ -44,7 +44,7 @@ public class VehiculoController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/delete/{placa}")
+    @DeleteMapping("/{placa}")
     public ResponseEntity<?> deleteVehiculo(@PathVariable String placa) {
 
         response.clear();
@@ -53,12 +53,12 @@ public class VehiculoController {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/edit/{placa}")
-    public ResponseEntity<?> editUsuario(@PathVariable String placa,@Valid @RequestBody VehiculoDto vehiculoDto) {
+    @PutMapping("/")
+    public ResponseEntity<?> editUsuario(@Valid @RequestBody VehiculoDto vehiculoDto) {
         response.clear();
-        VehiculoDto vehiculoDto1 = service.editarVehiculo(placa,vehiculoDto);
+        VehiculoDto vehiculoDto1 = service.editarVehiculo(vehiculoDto);
         response.put("message", "Vehiculo editado");
         response.put("vehiculo", vehiculoDto1);
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
 }

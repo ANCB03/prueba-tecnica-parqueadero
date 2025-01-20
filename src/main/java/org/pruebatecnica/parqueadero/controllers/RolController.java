@@ -21,7 +21,7 @@ public class RolController {
 
     private Map<String,Object> response = new HashMap<>();
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/all")
+    @GetMapping("/")
     public ResponseEntity<?> RolList(){
         return new ResponseEntity<>(service.listarRoles(), HttpStatus.OK);
     }
@@ -31,7 +31,7 @@ public class RolController {
         return new ResponseEntity<>(service.encontrarRolById(id), HttpStatus.OK);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/save")
+    @PostMapping("/")
     public ResponseEntity<?> saveRol(@Valid @RequestBody RolDto rolDto) {
         response.clear();
         service.guardar(rolDto);
@@ -39,7 +39,7 @@ public class RolController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRol(@PathVariable int id) {
 
         response.clear();
@@ -48,12 +48,12 @@ public class RolController {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/edit/{id}")
-    public ResponseEntity<?> editParqueadero(@PathVariable int id,@Valid @RequestBody RolDto rolDto) {
+    @PutMapping("/")
+    public ResponseEntity<?> editParqueadero(@Valid @RequestBody RolDto rolDto) {
         response.clear();
-        RolDto rolDto1 = service.editarRol(id,rolDto);
+        RolDto rolDto1 = service.editarRol(rolDto);
         response.put("message", "Rol editado");
         response.put("rol", rolDto1);
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
 }

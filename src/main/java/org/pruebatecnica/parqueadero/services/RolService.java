@@ -14,5 +14,5 @@ public interface RolService {
 
     public RolCompletoDto encontrarRolById(int id);
 
-    public RolDto editarRol(int id, RolDto rolDto);
+    public RolDto editarRol(RolDto rolDto);
 }

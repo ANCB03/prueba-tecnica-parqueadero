@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -21,5 +22,6 @@ public class HistorialSinParqueaderoDto {
 
     private BigDecimal monto;
 
-    private VehiculoDto vehiculo;
+    @NotBlank(message = "se requiere la placa del vehiculo")
+    private String id_vehiculo;
 }

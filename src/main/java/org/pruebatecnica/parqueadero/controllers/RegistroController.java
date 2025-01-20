@@ -23,7 +23,7 @@ public class RegistroController {
 
     private Map<String,Object> response = new HashMap<>();
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_SOCIO')")
-    @GetMapping("/all")
+    @GetMapping("/")
     public ResponseEntity<?> RegistroList(){
         return new ResponseEntity<>(service.listarRegistros(), HttpStatus.OK);
     }
@@ -32,23 +32,23 @@ public class RegistroController {
     public ResponseEntity<?> Top10Vehiculos(){
         return new ResponseEntity<>(service.encontrarTop10Vehiculos(), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_SOCIO')")
     @GetMapping("/top-10/{id}")
     public ResponseEntity<?> Top10Vehiculos(@PathVariable int id){
         return new ResponseEntity<>(service.encontrarTop10VehiculosParqueadero(id), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_SOCIO')")
     @GetMapping("/vehiculos/primera-vez/{id}")
     public ResponseEntity<?> PrimeraVez(@PathVariable int id){
         return new ResponseEntity<>(service.encontrarVehiculosPrimeraVezP(id), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_SOCIO')")
     @GetMapping({"/{id}"})
     public ResponseEntity<?> findRegistro(@PathVariable int id) {
         return new ResponseEntity<>(service.encontrarRegistroById(id), HttpStatus.OK);
     }
-
-    @PostMapping("/save")
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_SOCIO')")
+    @PostMapping("/")
     public ResponseEntity<?> saveRegistro(@Valid @RequestBody RegistroDto registroDto) {
         response.clear();
         service.guardar(registroDto);
@@ -64,8 +64,8 @@ public class RegistroController {
         response.put("id",registroDto.getIdRegistro());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
-    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRegistro(@PathVariable int id) {
 
         response.clear();
@@ -73,13 +73,13 @@ public class RegistroController {
         response.put("message","Registro eliminado");
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
-
-    @PutMapping("/edit/{id}")
-    public ResponseEntity<?> editRegistro(@PathVariable int id,@Valid @RequestBody RegistroDto registroDto) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/")
+    public ResponseEntity<?> editRegistro(@Valid @RequestBody RegistroDto registroDto) {
         response.clear();
-        RegistroDto registroDto1 = service.editarRegistro(id,registroDto);
+        RegistroDto registroDto1 = service.editarRegistro(registroDto);
         response.put("message", "Registro editado");
         response.put("registro", registroDto1);
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
 }

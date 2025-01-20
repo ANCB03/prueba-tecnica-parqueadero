@@ -58,8 +58,8 @@ public class RolImplement implements RolService {
     }
 
     @Override
-    public RolDto editarRol(int id, RolDto rolDto) {
-        Rol rol = repository.findById(id).orElseThrow(
+    public RolDto editarRol(RolDto rolDto) {
+        Rol rol = repository.findById(rolDto.getIdRol()).orElseThrow(
                 () -> new NotFoundException(messageUtil.getMessage("RolNotFound", null, Locale.getDefault()))
         );
         rolMapper.updateEntity(rolDto,rol);

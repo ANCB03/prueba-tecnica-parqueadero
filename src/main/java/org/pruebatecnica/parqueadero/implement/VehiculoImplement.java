@@ -78,8 +78,8 @@ public class VehiculoImplement implements VehiculoService {
     }
 
     @Override
-    public VehiculoDto editarVehiculo(String placa, VehiculoDto vehiculoDto) {
-        Vehiculo vehiculo = repository.findById(placa).orElseThrow(
+    public VehiculoDto editarVehiculo(VehiculoDto vehiculoDto) {
+        Vehiculo vehiculo = repository.findById(vehiculoDto.getPlaca()).orElseThrow(
                 () -> new NotFoundException(messageUtil.getMessage("VehiculoNotFound", null, Locale.getDefault()))
         );
         vehiculoMapper.updateEntity(vehiculoDto,vehiculo);

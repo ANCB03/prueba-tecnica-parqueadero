@@ -19,5 +19,5 @@ public interface HistorialService {
 
     public List<BigDecimal> gananciasPorPeridos(int idParqueadero);
 
-    public HistorialDto editarHistorial(int id, HistorialDto historialDto);
+    public HistorialDto editarHistorial(HistorialDto historialDto);
 }

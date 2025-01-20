@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
@@ -22,7 +23,9 @@ public class RegistroDto {
 
     private LocalDateTime fechaRegistro;
 
-    private VehiculoDto vehiculo;
+    @NotBlank(message = "se requiere la placa del vehiculo")
+    private String id_vehiculo;
 
-    private ParqueaderoDto parqueadero;
+    @Min(value = 1, message = "El campo idid_parqueadero_rol debe ser mayor que 0")
+    private int id_parqueadero;
 }

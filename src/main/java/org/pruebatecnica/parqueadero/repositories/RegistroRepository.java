@@ -28,19 +28,19 @@ public interface RegistroRepository extends JpaRepository<Registro, Integer> {
     List<Registro> findVehiculosConEntradaParqueadero(int idParqueadero);
 
     @Query(
-            value = "SELECT r.id_vehiculo, COUNT(r.id_vehiculo) AS totalRegistros FROM REGISTRO r GROUP BY r.id_vehiculo ORDER BY totalRegistros DESC LIMIT 10",
+            value = "SELECT r.id_vehiculo, COUNT(r.id_vehiculo) AS totalRegistros FROM registro r GROUP BY r.id_vehiculo ORDER BY totalRegistros DESC LIMIT 10",
             nativeQuery = true
     )
     List<Object[]> findTop10Vehiculos();
 
     @Query(
-            value = "SELECT r.id_vehiculo, COUNT(r.id_vehiculo) AS totalRegistros FROM REGISTRO r WHERE id_parqueadero = :idParqueadero GROUP BY r.id_vehiculo ORDER BY totalRegistros DESC LIMIT 10",
+            value = "SELECT r.id_vehiculo, COUNT(r.id_vehiculo) AS totalRegistros FROM registro r WHERE id_parqueadero = :idParqueadero GROUP BY r.id_vehiculo ORDER BY totalRegistros DESC LIMIT 10",
             nativeQuery = true
     )
     List<Object[]> findTop10VehiculosParqueadero(int idParqueadero);
 
     @Query(
-            value = "SELECT r.id_vehiculo FROM REGISTRO r WHERE id_parqueadero = :idParqueadero GROUP BY r.id_vehiculo HAVING COUNT(r.id_vehiculo) = 1",
+            value = "SELECT r.id_vehiculo FROM registro r WHERE id_parqueadero = :idParqueadero GROUP BY r.id_vehiculo HAVING COUNT(r.id_vehiculo) = 1",
             nativeQuery = true
     )
     List<Object[]> findFirstTimeParqueadero(int idParqueadero);
